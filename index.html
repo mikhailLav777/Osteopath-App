@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Оля — Остеопат</title>
+<style>
+:root {
+  --bg-root: #06091a;
+  --bg-primary: #0B132B;
+  --bg-card: #131e3a;
+  --text-white: #FFFFFF;
+  --text-muted: #A0AEC0;
+  --accent-gold: #D4AF37;
+  --accent-green: #48BB78;
+  --status-busy: #E53E3E;
+  --status-lunch: #ECC94B;
+  --status-break: #4A5568;
+  --nav-bg: #0d1830;
+  --border: rgba(255,255,255,0.07);
+  --shadow: 0 4px 24px rgba(0,0,0,0.45);
+  --radius: 16px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  background: var(--bg-root);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow-x: hidden;
+}
+.phone {
+  width: 100%;
+  max-width: 400px;
+  min-height: 100vh;
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.header {
+  padding: 52px 20px 16px;
+  background: linear-gradient(180deg, #0d1830 0%, var(--bg-primary) 100%);
+}
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.header h1 {
+  font-size: 25px;
+  font-weight: 700;
+  color: var(--text-white);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+.header h1 span { color: var(--accent-gold); }
+.header-sub {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.date-badge {
+  background: rgba(212,175,55,0.12);
+  border: 1px solid rgba(212,175,55,0.28);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: var(--accent-gold);
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.stats-row {
+  display: flex;
+  gap: 10px;
+  padding: 14px 20px 0;
+}
+.stat-card {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: 13px;
+  padding: 12px 8px;
+  text-align: center;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+}
+.stat-num {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+}
+.stat-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+.section-title {
+  padding: 18px 20px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.schedule {
+  flex: 1;
+  padding: 0 16px 100px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+.slot {
+  display: flex;
+  align-items: stretch;
+  margin-bottom: 10px;
+  gap: 10px;
+}
+.time-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 50px;
+  padding-top: 14px;
+}
+.t-start {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-white);
+}
+.t-end {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+.t-line {
+  flex: 1;
+  width: 2px;
+  background: var(--border);
+  margin-top: 8px;
+  border-radius: 2px;
+  min-height: 12px;
+}
+.card {
+  flex: 1;
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  padding: 13px 15px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.card-busy   { border-left: 3px solid var(--status-busy); }
+.card-free   { border-left: 3px solid var(--accent-green); }
+.card-break  { border-left: 3px solid var(--status-break); background: rgba(74,85,104,0.18); }
+.card-lunch  { border-left: 3px solid var(--status-lunch); background: rgba(236,201,75,0.07); }
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.client-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-white);
+}
+.badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-busy   { background: rgba(229,62,62,0.15); color: #FC8181; }
+.badge-free   { background: rgba(72,187,120,0.15); color: var(--accent-green); }
+.badge-break  { background: rgba(74,85,104,0.35); color: #A0AEC0; }
+.badge-lunch  { background: rgba(236,201,75,0.15); color: var(--status-lunch); }
+.card-detail  { font-size: 13px; color: var(--text-muted); }
+.btn-book {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  background: rgba(72,187,120,0.1);
+  border: 1px solid rgba(72,187,120,0.28);
+  border-radius: 10px;
+  color: var(--accent-green);
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  margin-top: 2px;
+}
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 400px;
+  background: var(--nav-bg);
+  border-top: 1px solid var(--border);
+  display: flex;
+  padding: 8px 0 22px;
+  z-index: 100;
+}
+.nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 52px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 500;
+}
+.nav-item.active { color: var(--accent-gold); }
+.nav-item.nav-add { color: var(--accent-green); }
+.nav-icon { font-size: 22px; line-height: 1; }
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="header">
+    <div class="header-top">
+      <div>
+        <h1>Оля — <span>Остеопат</span></h1>
+        <p class="header-sub">Сегодняшние записи</p>
+      </div>
+      <div class="date-badge">15 Октября, Пт</div>
+    </div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--status-busy)">3</div>
+      <div class="stat-label">Занято</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--accent-green)">2</div>
+      <div class="stat-label">Свободно</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" style="color:var(--accent-gold)">5</div>
+      <div class="stat-label">Всего</div>
+    </div>
+  </div>
+
+  <div class="section-title">Расписание дня</div>
+
+  <div class="schedule">
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">09:00</div>
+        <div class="t-end">10:00</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-busy">
+        <div class="card-head">
+          <span class="client-name">Иванов И.И.</span>
+          <span class="badge badge-busy">Занято</span>
+        </div>
+        <div class="card-detail">Крестец · 60 мин</div>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">10:15</div>
+        <div class="t-end">11:15</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-free">
+        <div class="card-head">
+          <span class="client-name">Свободное время</span>
+          <span class="badge badge-free">Свободно</span>
+        </div>
+        <a href="add.html" class="btn-book">＋ Записаться</a>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">11:15</div>
+        <div class="t-end">11:30</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-break">
+        <div class="card-head">
+          <span class="client-name">Перерыв</span>
+          <span class="badge badge-break">Перерыв</span>
+        </div>
+        <div class="card-detail">15 минут отдыха</div>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">11:30</div>
+        <div class="t-end">12:30</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-busy">
+        <div class="card-head">
+          <span class="client-name">Петрова А.С.</span>
+          <span class="badge badge-busy">Занято</span>
+        </div>
+        <div class="card-detail">Шейный отдел · 60 мин</div>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">13:00</div>
+        <div class="t-end">14:00</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-lunch">
+        <div class="card-head">
+          <span class="client-name">Обеденный перерыв</span>
+          <span class="badge badge-lunch">Обед</span>
+        </div>
+        <div class="card-detail">1 час · до 14:00</div>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">14:00</div>
+        <div class="t-end">15:00</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-free">
+        <div class="card-head">
+          <span class="client-name">Свободное время</span>
+          <span class="badge badge-free">Свободно</span>
+        </div>
+        <a href="add.html" class="btn-book">＋ Записаться</a>
+      </div>
+    </div>
+
+    <div class="slot">
+      <div class="time-col">
+        <div class="t-start">15:15</div>
+        <div class="t-end">16:15</div>
+        <div class="t-line"></div>
+      </div>
+      <div class="card card-busy">
+        <div class="card-head">
+          <span class="client-name">Соколов Д.В.</span>
+          <span class="badge badge-busy">Занято</span>
+        </div>
+        <div class="card-detail">Поясница · 60 мин</div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-item active">
+      <span class="nav-icon">🏠</span>
+      <span>Расписание</span>
+    </a>
+    <a href="add.html" class="nav-item nav-add">
+      <span class="nav-icon">➕</span>
+      <span>Добавить</span>
+    </a>
+    <a href="settings.html" class="nav-item">
+      <span class="nav-icon">⚙️</span>
+      <span>Настройки</span>
+    </a>
+  </nav>
+</div>
+</body>
+</html>
