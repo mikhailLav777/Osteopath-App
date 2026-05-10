@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AVICENNA — Вход в систему</title>
+<style>
+:root {
+  --bg-root: #06091a;
+  --bg-primary: #0B132B;
+  --bg-card: #131e3a;
+  --text-white: #FFFFFF;
+  --text-muted: #A0AEC0;
+  --accent-gold: #D4AF37;
+  --accent-gold-soft: #f0cc55;
+  --accent-green: #48BB78;
+  --status-busy: #E53E3E;
+  --border: rgba(255,255,255,0.08);
+  --glass-bg: rgba(19, 30, 58, 0.55);
+  --glass-border: rgba(255,255,255,0.10);
+  --shadow-card: 0 25px 60px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.35);
+  --shadow-gold: 0 8px 28px rgba(212,175,55,0.35);
+  --radius: 22px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { height: 100%; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: var(--text-white);
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(212,175,55,0.10), transparent 60%),
+    radial-gradient(900px 600px at -10% 110%, rgba(72,187,120,0.08), transparent 60%),
+    linear-gradient(160deg, #050816 0%, #0B132B 45%, #0d1f4a 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 18px;
+  overflow: hidden;
+  position: relative;
+}
+
+.bg-decor {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.bg-decor svg {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  opacity: 0.55;
+}
+.spine {
+  position: absolute;
+  top: 50%;
+  right: -120px;
+  transform: translateY(-50%);
+  width: 360px;
+  height: 720px;
+  opacity: 0.18;
+  filter: drop-shadow(0 0 20px rgba(212,175,55,0.35));
+  animation: floatY 9s ease-in-out infinite;
+}
+@keyframes floatY {
+  0%, 100% { transform: translateY(-50%); }
+  50% { transform: translateY(calc(-50% - 14px)); }
+}
+
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(212,175,55,0.6);
+  box-shadow: 0 0 10px rgba(212,175,55,0.7);
+  opacity: 0;
+  animation: rise linear infinite;
+}
+.particle.green { background: rgba(72,187,120,0.6); box-shadow: 0 0 10px rgba(72,187,120,0.55); }
+.particle.white { background: rgba(255,255,255,0.55); box-shadow: 0 0 8px rgba(255,255,255,0.5); width: 3px; height: 3px; }
+@keyframes rise {
+  0%   { transform: translateY(20px) scale(0.6); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 0.8; }
+  100% { transform: translateY(-110vh) scale(1); opacity: 0; }
+}
+
+.card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 440px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 38px 30px 28px;
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  box-shadow: var(--shadow-card);
+  animation: cardIn 0.9s cubic-bezier(.2,.8,.2,1) both;
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(28px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, rgba(212,175,55,0.18), rgba(255,255,255,0) 35%, rgba(72,187,120,0.10));
+  pointer-events: none;
+  mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
+  mask-composite: exclude;
+  -webkit-mask-composite: xor;
+  padding: 1px;
+  opacity: 0.7;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 26px;
+  animation: fadeUp 0.9s 0.15s both;
+}
+.logo-mark {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #c9a227 0%, #f0cc55 100%);
+  box-shadow: 0 10px 28px rgba(212,175,55,0.4), inset 0 0 0 2px rgba(255,255,255,0.12);
+  margin-bottom: 16px;
+  animation: pulseGold 4s ease-in-out infinite;
+}
+.logo-mark svg { width: 34px; height: 34px; }
+@keyframes pulseGold {
+  0%, 100% { box-shadow: 0 10px 28px rgba(212,175,55,0.4), inset 0 0 0 2px rgba(255,255,255,0.12); }
+  50%      { box-shadow: 0 10px 36px rgba(212,175,55,0.65), inset 0 0 0 2px rgba(255,255,255,0.18); }
+}
+.brand h1 {
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: 4px;
+  background: linear-gradient(135deg, #f0cc55 0%, #fff5c2 50%, #c9a227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  margin-bottom: 6px;
+}
+.brand .subtitle {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 1.4px;
+  text-transform: lowercase;
+  font-style: italic;
+}
+.brand .tagline {
+  font-size: 12.5px;
+  color: rgba(255,255,255,0.72);
+  margin-top: 14px;
+  letter-spacing: 0.4px;
+  line-height: 1.5;
+}
+
+.lang-switch {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 3px;
+  z-index: 3;
+}
+.lang-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+.lang-btn.active {
+  background: linear-gradient(135deg, #c9a227 0%, #f0cc55 100%);
+  color: #0B132B;
+  box-shadow: 0 3px 10px rgba(212,175,55,0.4);
+}
+
+.form-group {
+  margin-bottom: 16px;
+  animation: fadeUp 0.9s 0.3s both;
+}
+.form-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 8px;
+  padding-left: 4px;
+}
+.input-wrap {
+  position: relative;
+}
+.input-wrap .icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  transition: color 0.25s;
+}
+.form-input {
+  width: 100%;
+  min-height: 52px;
+  background: rgba(11, 19, 43, 0.55);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 0 16px 0 46px;
+  font-size: 15px;
+  color: var(--text-white);
+  outline: none;
+  font-family: inherit;
+  transition: all 0.25s;
+  backdrop-filter: blur(8px);
+}
+.form-input::placeholder { color: rgba(160,174,192,0.45); }
+.form-input:focus {
+  border-color: rgba(212,175,55,0.5);
+  background: rgba(11, 19, 43, 0.75);
+  box-shadow: 0 0 0 4px rgba(212,175,55,0.10), 0 4px 16px rgba(0,0,0,0.3);
+}
+.form-input:focus + .icon-wrap .icon,
+.input-wrap:focus-within .icon { color: var(--accent-gold); }
+
+.form-group:nth-of-type(2) { animation-delay: 0.4s; }
+
+.btn-login {
+  width: 100%;
+  min-height: 54px;
+  margin-top: 8px;
+  background: linear-gradient(135deg, #c9a227 0%, #f0cc55 100%);
+  color: #0B132B;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-gold);
+  transition: transform 0.2s, box-shadow 0.3s;
+  animation: fadeUp 0.9s 0.5s both;
+}
+.btn-login::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.45) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.7s;
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 38px rgba(212,175,55,0.55), 0 0 0 3px rgba(212,175,55,0.18);
+}
+.btn-login:hover::before { transform: translateX(100%); }
+.btn-login:active { transform: translateY(0); }
+
+.error-msg {
+  margin-top: 14px;
+  padding: 12px 14px;
+  background: rgba(229,62,62,0.10);
+  border: 1px solid rgba(229,62,62,0.35);
+  border-radius: 12px;
+  color: #FC8181;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.error-msg.show {
+  display: flex;
+  animation: shake 0.5s ease, fadeUp 0.4s ease;
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-8px); }
+  40%      { transform: translateX(8px); }
+  60%      { transform: translateX(-5px); }
+  80%      { transform: translateX(5px); }
+}
+
+.footer {
+  margin-top: 26px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1.6px;
+  color: rgba(160,174,192,0.55);
+  text-transform: uppercase;
+  animation: fadeUp 0.9s 0.7s both;
+}
+.footer-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212,175,55,0.5), transparent);
+  margin: 0 auto 12px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 480px) {
+  .card { padding: 32px 22px 24px; border-radius: 20px; }
+  .brand h1 { font-size: 26px; letter-spacing: 3px; }
+  .logo-mark { width: 56px; height: 56px; }
+  .lang-switch { top: 14px; right: 14px; }
+  .spine { right: -180px; opacity: 0.12; }
+}
+@media (min-width: 768px) {
+  .card { max-width: 460px; padding: 44px 38px 32px; }
+  .brand h1 { font-size: 34px; letter-spacing: 5px; }
+}
+@media (min-width: 1100px) {
+  body { padding: 40px; }
+  .card { max-width: 480px; }
+}
+</style>
+</head>
+<body>
+
+<div class="bg-decor">
+  <svg viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="lineGrad" x1="0" x2="1" y1="0" y2="1">
+        <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.55"/>
+        <stop offset="100%" stop-color="#48BB78" stop-opacity="0.25"/>
+      </linearGradient>
+      <radialGradient id="glowA" cx="0.5" cy="0.5" r="0.5">
+        <stop offset="0%" stop-color="#D4AF37" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#D4AF37" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="200" cy="180" r="260" fill="url(#glowA)"/>
+    <circle cx="1280" cy="720" r="320" fill="url(#glowA)" opacity="0.6"/>
+    <g stroke="url(#lineGrad)" stroke-width="1" fill="none" opacity="0.5">
+      <path d="M0,300 C300,200 500,400 720,320 C940,240 1140,420 1440,340"/>
+      <path d="M0,520 C260,480 460,620 720,540 C980,460 1180,640 1440,560"/>
+      <path d="M0,720 C320,640 540,820 800,740 C1060,660 1240,800 1440,760"/>
+    </g>
+    <g fill="#D4AF37" opacity="0.6">
+      <circle cx="220" cy="305" r="2.2"/>
+      <circle cx="720" cy="320" r="2.5"/>
+      <circle cx="1140" cy="420" r="2.2"/>
+      <circle cx="460" cy="620" r="2"/>
+      <circle cx="980" cy="460" r="2.5"/>
+      <circle cx="800" cy="740" r="2.2"/>
+    </g>
+  </svg>
+
+  <svg class="spine" viewBox="0 0 200 600" xmlns="http://www.w3.org/2000/svg" fill="none">
+    <defs>
+      <linearGradient id="spineGrad" x1="0" x2="0" y1="0" y2="1">
+        <stop offset="0%" stop-color="#f0cc55" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#48BB78" stop-opacity="0.6"/>
+      </linearGradient>
+    </defs>
+    <path d="M100,20 C140,80 60,140 100,200 C140,260 60,320 100,380 C140,440 60,500 100,580"
+          stroke="url(#spineGrad)" stroke-width="2.4" fill="none"/>
+    <g stroke="url(#spineGrad)" stroke-width="1.8" fill="none">
+      <ellipse cx="100" cy="60"  rx="28" ry="10"/>
+      <ellipse cx="100" cy="120" rx="32" ry="11"/>
+      <ellipse cx="100" cy="180" rx="34" ry="11"/>
+      <ellipse cx="100" cy="240" rx="36" ry="12"/>
+      <ellipse cx="100" cy="300" rx="38" ry="12"/>
+      <ellipse cx="100" cy="360" rx="40" ry="13"/>
+      <ellipse cx="100" cy="420" rx="42" ry="13"/>
+      <ellipse cx="100" cy="480" rx="44" ry="14"/>
+      <ellipse cx="100" cy="540" rx="46" ry="14"/>
+    </g>
+  </svg>
+</div>
+
+<div class="particles" id="particles"></div>
+
+<div class="card" role="main">
+  <div class="lang-switch" role="group" aria-label="Language switcher">
+    <button class="lang-btn active" data-lang="ru" type="button">RU</button>
+    <button class="lang-btn" data-lang="en" type="button">EN</button>
+  </div>
+
+  <div class="brand">
+    <div class="logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 3 L26 27 L21 27 L19 22 L13 22 L11 27 L6 27 Z M14.4 18 L17.6 18 L16 13.5 Z"
+              fill="#0B132B"/>
+      </svg>
+    </div>
+    <h1 data-i18n="title">АВИЦЕННА</h1>
+    <div class="subtitle" data-i18n="subtitle">искусство восстановления</div>
+    <div class="tagline" data-i18n="tagline">Точная диагностика. Мягкое восстановление.</div>
+  </div>
+
+  <form id="loginForm" autocomplete="off" novalidate>
+    <div class="form-group">
+      <label class="form-label" for="login" data-i18n="loginLabel">Логин</label>
+      <div class="input-wrap">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+        </svg>
+        <input type="text" id="login" class="form-input" data-i18n-ph="loginPh" placeholder="Введите логин" required>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="password" data-i18n="passwordLabel">Пароль</label>
+      <div class="input-wrap">
+        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="11" width="16" height="10" rx="2"/>
+          <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+        </svg>
+        <input type="password" id="password" class="form-input" data-i18n-ph="passwordPh" placeholder="Введите пароль" required>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-login" data-i18n="loginBtn">Войти в систему</button>
+
+    <div class="error-msg" id="errorMsg">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="13"/>
+        <circle cx="12" cy="16.5" r="0.6" fill="currentColor"/>
+      </svg>
+      <span data-i18n="errorMsg">Неверный логин или пароль</span>
+    </div>
+  </form>
+
+  <div class="footer">
+    <div class="footer-divider"></div>
+    <span data-i18n="footer">AVICENNA • Osteopathic Practice System</span>
+  </div>
+</div>
+
+<script>
+const I18N = {
+  ru: {
+    title: 'АВИЦЕННА',
+    subtitle: 'искусство восстановления',
+    tagline: 'Точная диагностика. Мягкое восстановление.',
+    loginLabel: 'Логин',
+    passwordLabel: 'Пароль',
+    loginPh: 'Введите логин',
+    passwordPh: 'Введите пароль',
+    loginBtn: 'Войти в систему',
+    errorMsg: 'Неверный логин или пароль',
+    footer: 'AVICENNA • Osteopathic Practice System'
+  },
+  en: {
+    title: 'AVICENNA',
+    subtitle: 'the art of recovery',
+    tagline: 'Precise diagnosis. Gentle recovery.',
+    loginLabel: 'Username',
+    passwordLabel: 'Password',
+    loginPh: 'Enter username',
+    passwordPh: 'Enter password',
+    loginBtn: 'Sign in to system',
+    errorMsg: 'Invalid username or password',
+    footer: 'AVICENNA • Osteopathic Practice System'
+  }
+};
+
+let currentLang = 'ru';
+
+function applyLang(lang) {
+  currentLang = lang;
+  const dict = I18N[lang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (dict[key]) el.textContent = dict[key];
+  });
+  document.querySelectorAll('[data-i18n-ph]').forEach(el => {
+    const key = el.getAttribute('data-i18n-ph');
+    if (dict[key]) el.setAttribute('placeholder', dict[key]);
+  });
+  document.documentElement.setAttribute('lang', lang);
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === lang);
+  });
+}
+
+document.querySelectorAll('.lang-btn').forEach(btn => {
+  btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+});
+
+const VALID_LOGIN = 'admin';
+const VALID_PASSWORD = 'osteopath2026';
+
+const form = document.getElementById('loginForm');
+const errorMsg = document.getElementById('errorMsg');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const login = document.getElementById('login').value.trim();
+  const password = document.getElementById('password').value;
+
+  if (login === VALID_LOGIN && password === VALID_PASSWORD) {
+    errorMsg.classList.remove('show');
+    const card = document.querySelector('.card');
+    card.style.transition = 'opacity 0.5s, transform 0.5s';
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(-20px) scale(0.98)';
+    setTimeout(() => { window.location.href = 'index.html'; }, 480);
+  } else {
+    errorMsg.classList.remove('show');
+    void errorMsg.offsetWidth;
+    errorMsg.classList.add('show');
+    document.getElementById('password').value = '';
+    document.getElementById('password').focus();
+  }
+});
+
+const particlesRoot = document.getElementById('particles');
+const colors = ['', 'green', 'white'];
+for (let i = 0; i < 28; i++) {
+  const p = document.createElement('div');
+  p.className = 'particle ' + colors[Math.floor(Math.random() * colors.length)];
+  p.style.left = Math.random() * 100 + 'vw';
+  p.style.bottom = '-20px';
+  p.style.animationDuration = (10 + Math.random() * 14) + 's';
+  p.style.animationDelay = (Math.random() * 12) + 's';
+  const scale = 0.5 + Math.random() * 1.4;
+  p.style.transform = `scale(${scale})`;
+  particlesRoot.appendChild(p);
+}
+
+applyLang('ru');
+</script>
+</body>
+</html>
